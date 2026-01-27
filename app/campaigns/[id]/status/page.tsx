@@ -82,7 +82,7 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
       const response = await fetch(`/api/campaigns/${params.id}/bulk-send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailsPerHour: 50 }), // Safe rate: 50 emails/hour
+        body: JSON.stringify({ emailsPerHour: 500 }), // 500 emails/hour with paid plan
       })
       
       if (response.ok) {
@@ -110,7 +110,7 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
       const response = await fetch('/api/email-queue/process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batchSize: 50, delayMs: 2000 }), // 2 sec delay = ~100 emails/hour
+        body: JSON.stringify({ batchSize: 50, delayMs: 500 }), // 500ms delay = ~360 emails/hour
       })
       
       if (response.ok) {

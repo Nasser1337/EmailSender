@@ -6,9 +6,9 @@ export const maxDuration = 300 // 5 minutes max execution time
 
 export async function POST(request: NextRequest) {
   try {
-    const { batchSize = 50, delayMs = 2000 } = await request.json().catch(() => ({}))
+    const { batchSize = 50, delayMs = 500 } = await request.json().catch(() => ({}))
     
-    // Send emails with delay between each (default 2 seconds = 1800 emails/hour max)
+    // Send emails with delay between each (default 500ms = ~7200 emails/hour max, well within 50k/month limit)
     const results = await sendQueuedEmails(batchSize, delayMs)
     
     return NextResponse.json({
@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // Default: 50 emails with 2 second delay = ~100 emails/hour (safe rate)
-    const results = await sendQueuedEmails(50, 2000)
+    // Default: 50 emails with 500ms delay = ~360 emails/hour (safe for paid plan)
+    const results = await sendQueuedEmails(50, 500)
     
     return NextResponse.json({
       success: true,
