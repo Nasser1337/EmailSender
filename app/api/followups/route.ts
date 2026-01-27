@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { queueEmail } from '@/lib/email-queue'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const events = await prisma.emailEvent.findMany({
@@ -73,7 +75,7 @@ export async function POST(request: NextRequest) {
     // Check if campaign has follow-up templates
     if (!campaign.followUpSubjectNl && !campaign.followUpSubjectFr) {
       return NextResponse.json(
-        { error: 'Campaign does not have follow-up templates configured' },
+        { error: `Campaign "${campaign.name}" does not have follow-up templates configured. Please edit the campaign and add follow-up subject and body for Dutch and/or French.` },
         { status: 400 }
       )
     }
