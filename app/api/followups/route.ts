@@ -29,9 +29,9 @@ export async function GET(request: NextRequest) {
     })
     
     const stats = {
-      openedNotClicked: events.filter(e => e.openCount > 0 && e.clickCount === 0).length,
-      notOpened: events.filter(e => e.sentAt && e.openCount === 0 && !['failed', 'bounced'].includes(e.status)).length,
-      failed: events.filter(e => ['failed', 'bounced'].includes(e.status)).length,
+      openedNotClicked: events.filter((e: any) => e.openCount > 0 && e.clickCount === 0).length,
+      notOpened: events.filter((e: any) => e.sentAt && e.openCount === 0 && !['failed', 'bounced'].includes(e.status)).length,
+      failed: events.filter((e: any) => ['failed', 'bounced'].includes(e.status)).length,
     }
     
     return NextResponse.json({ events, stats })
@@ -47,11 +47,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { campaignId, contactIds, subjectNl, subjectFr, bodyNl, bodyFr } = body
+    const { campaignId, contactId, contactIds } = body
     
-    if (!campaignId || !contactIds || contactIds.length === 0) {
+    // Support both single contact and multiple contacts
+    const contactIdsToProcess = contactId ? [contactId] : (contactIds || [])
+    
+    if (!campaignId || contactIdsToProcess.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing campaignId or contactId/contactIds' },
         { status: 400 }
       )
     }
@@ -66,45 +69,67 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
-    
-    const updatedCampaign = await prisma.campaign.update({
-      where: { id: campaignId },
-      data: {
-        subjectNl: subjectNl || campaign.subjectNl,
-        subjectFr: subjectFr || campaign.subjectFr,
-        bodyNl: bodyNl || campaign.bodyNl,
-        bodyFr: bodyFr || campaign.bodyFr,
-      },
-    })
+
+    // Check if campaign has follow-up templates
+    if (!campaign.followUpSubjectNl && !campaign.followUpSubjectFr) {
+      return NextResponse.json(
+        { error: 'Campaign does not have follow-up templates configured' },
+        { status: 400 }
+      )
+    }
     
     const queuedEmails = []
-    for (const contactId of contactIds) {
+    for (const cId of contactIdsToProcess) {
       try {
+        const contact = await prisma.contact.findUnique({
+          where: { id: cId },
+        })
+
+        if (!contact) continue
+
         const originalEvent = await prisma.emailEvent.findFirst({
           where: {
             campaignId,
-            contactId,
+            contactId: cId,
             isFollowUp: false,
           },
           orderBy: { createdAt: 'desc' },
         })
+
+        // Use follow-up templates from campaign
+        const language = contact.language
+        const subject = language === 'fr' ? campaign.followUpSubjectFr : campaign.followUpSubjectNl
+        const body = language === 'fr' ? campaign.followUpBodyFr : campaign.followUpBodyNl
+
+        if (!subject || !body) {
+          console.error(`Missing ${language} follow-up template for campaign`)
+          continue
+        }
+
+        // Create follow-up email event
+        const event = await prisma.emailEvent.create({
+          data: {
+            campaignId,
+            contactId: cId,
+            subject,
+            body,
+            language,
+            status: 'queued',
+            isFollowUp: true,
+            parentEventId: originalEvent?.id,
+          },
+        })
         
-        const event = await queueEmail(
-          campaignId,
-          contactId,
-          true,
-          originalEvent?.id
-        )
         queuedEmails.push(event)
       } catch (error) {
-        console.error(`Failed to queue follow-up for contact ${contactId}:`, error)
+        console.error(`Failed to queue follow-up for contact ${cId}:`, error)
       }
     }
     
     return NextResponse.json({
       success: true,
       queued: queuedEmails.length,
-      total: contactIds.length,
+      total: contactIdsToProcess.length,
     })
   } catch (error) {
     console.error('Follow-up send error:', error)

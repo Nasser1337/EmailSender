@@ -40,6 +40,7 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
   const [events, setEvents] = useState<EmailEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
+  const [bulkSending, setBulkSending] = useState(false)
   const [stats, setStats] = useState({
     total: 0,
     sent: 0,
@@ -71,13 +72,45 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
     }
   }
 
+  const handleBulkSend = async () => {
+    if (!confirm('This will queue emails to ALL contacts in your database. Continue?')) {
+      return
+    }
+
+    setBulkSending(true)
+    try {
+      const response = await fetch(`/api/campaigns/${params.id}/bulk-send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailsPerHour: 50 }), // Safe rate: 50 emails/hour
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        toast.success(data.message)
+        fetchCampaignStatus()
+        
+        // Start processing the queue
+        processQueue()
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Failed to queue emails')
+      }
+    } catch (error) {
+      console.error('Failed to bulk send:', error)
+      toast.error('Failed to queue bulk emails')
+    } finally {
+      setBulkSending(false)
+    }
+  }
+
   const handleProcessQueue = async () => {
     setProcessing(true)
     try {
       const response = await fetch('/api/email-queue/process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batchSize: 50 }),
+        body: JSON.stringify({ batchSize: 50, delayMs: 2000 }), // 2 sec delay = ~100 emails/hour
       })
       
       if (response.ok) {
@@ -151,6 +184,10 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
           <p className="text-muted-foreground">Email send status and tracking</p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={handleBulkSend} disabled={bulkSending} size="sm">
+            <Send className="mr-2 h-4 w-4" />
+            {bulkSending ? 'Queueing...' : 'Bulk Send to All'}
+          </Button>
           <Button variant="outline" size="sm" onClick={handleProcessQueue} disabled={processing}>
             <Send className="mr-2 h-4 w-4" />
             {processing ? 'Processing...' : 'Process Queue'}

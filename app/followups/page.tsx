@@ -58,6 +58,31 @@ export default function FollowUpsPage() {
     }
   }
 
+  const handleSendFollowUp = async (campaignId: string, contactId: string) => {
+    if (!confirm('Send a follow-up email to this contact?')) {
+      return
+    }
+
+    try {
+      const response = await fetch('/api/followups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId, contactId }),
+      })
+
+      if (response.ok) {
+        toast.success('Follow-up email queued successfully')
+        fetchFollowUpData()
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Failed to queue follow-up email')
+      }
+    } catch (error) {
+      console.error('Failed to send follow-up:', error)
+      toast.error('Failed to queue follow-up email')
+    }
+  }
+
   const openedNotClicked = events.filter(e => e.openedAt && !e.clickedAt)
   const notOpened = events.filter(e => e.sentAt && !e.openedAt && e.status !== 'failed' && e.status !== 'bounced')
   const failed = events.filter(e => e.status === 'failed' || e.status === 'bounced')
@@ -207,8 +232,12 @@ export default function FollowUpsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {!event.openedAt && event.status !== 'failed' && event.status !== 'bounced' && (
-                        <Button variant="outline" size="sm">
+                      {event.status !== 'failed' && event.status !== 'bounced' && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleSendFollowUp(event.campaign.id, event.contact.id)}
+                        >
                           <Mail className="mr-2 h-4 w-4" />
                           Follow Up
                         </Button>

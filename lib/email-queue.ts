@@ -43,7 +43,7 @@ export async function queueEmail(
   return emailEvent
 }
 
-export async function sendQueuedEmails(batchSize: number = 10) {
+export async function sendQueuedEmails(batchSize: number = 10, delayMs: number = 2000) {
   const queuedEvents = await prisma.emailEvent.findMany({
     where: {
       status: 'queued',
@@ -65,10 +65,16 @@ export async function sendQueuedEmails(batchSize: number = 10) {
     errors: [] as string[],
   }
 
-  for (const event of queuedEvents) {
+  for (let i = 0; i < queuedEvents.length; i++) {
+    const event = queuedEvents[i]
     try {
       await sendEmail(event.id)
       results.sent++
+      
+      // Add delay between emails to avoid rate limiting (except for last email)
+      if (i < queuedEvents.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, delayMs))
+      }
     } catch (error) {
       results.failed++
       results.errors.push(`Event ${event.id}: ${error instanceof Error ? error.message : 'Unknown error'}`)
