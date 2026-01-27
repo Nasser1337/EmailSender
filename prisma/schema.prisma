@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campaigns Campaign[]
+}
+
+model Contact {
+  id               String   @id @default(cuid())
+  firstName        String?
+  lastName         String?
+  email            String   @unique
+  company          String?
+  city             String?
+  postcode         String?
+  province         String?
+  region           String?
+  website          String?
+  phone            String?
+  language         String   @default("nl")
+  languageOverride Boolean  @default(false)
+  customData       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  emailEvents EmailEvent[]
+  followUps   FollowUp[]
+
+  @@index([email])
+  @@index([city])
+  @@index([province])
+  @@index([language])
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  status      String   @default("draft")
+  subjectNl   String?
+  subjectFr   String?
+  bodyNl      String?
+  bodyFr      String?
+  fromEmail   String?
+  fromName    String?
+  replyTo     String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  scheduledAt DateTime?
+  sentAt      DateTime?
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailEvents EmailEvent[]
+  followUps   FollowUp[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model EmailEvent {
+  id              String    @id @default(cuid())
+  campaignId      String
+  contactId       String
+  resendEmailId   String?
+  subject         String
+  body            String
+  language        String
+  status          String    @default("queued")
+  isFollowUp      Boolean   @default(false)
+  parentEventId   String?
+  queuedAt        DateTime  @default(now())
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  firstOpenedAt   DateTime?
+  clickedAt       DateTime?
+  firstClickedAt  DateTime?
+  bouncedAt       DateTime?
+  failedAt        DateTime?
+  complainedAt    DateTime?
+  suppressedAt    DateTime?
+  openCount       Int       @default(0)
+  clickCount      Int       @default(0)
+  errorMessage    String?
+  metadata        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  campaign    Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact     Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  parentEvent EmailEvent?  @relation("FollowUpChain", fields: [parentEventId], references: [id])
+  childEvents EmailEvent[] @relation("FollowUpChain")
+
+  @@index([campaignId])
+  @@index([contactId])
+  @@index([resendEmailId])
+  @@index([status])
+  @@index([isFollowUp])
+  @@index([sentAt])
+  @@index([openedAt])
+}
+
+model FollowUp {
+  id         String   @id @default(cuid())
+  campaignId String
+  contactId  String
+  subjectNl  String?
+  subjectFr  String?
+  bodyNl     String?
+  bodyFr     String?
+  status     String   @default("draft")
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([contactId])
+  @@index([status])
+}
+
+model LanguageRule {
+  id        String   @id @default(cuid())
+  type      String
+  value     String
+  language  String
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, value])
+  @@index([type])
+  @@index([language])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
