@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -30,6 +32,41 @@ export async function GET(
     console.error('Error fetching campaign:', error)
     return NextResponse.json(
       { error: 'Failed to fetch campaign' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const body = await request.json()
+    
+    const campaign = await prisma.campaign.update({
+      where: { id: params.id },
+      data: {
+        name: body.name,
+        subjectNl: body.subjectNl,
+        subjectFr: body.subjectFr,
+        bodyNl: body.bodyNl,
+        bodyFr: body.bodyFr,
+        followUpSubjectNl: body.followUpSubjectNl,
+        followUpSubjectFr: body.followUpSubjectFr,
+        followUpBodyNl: body.followUpBodyNl,
+        followUpBodyFr: body.followUpBodyFr,
+        fromEmail: body.fromEmail,
+        fromName: body.fromName,
+        replyTo: body.replyTo,
+      },
+    })
+
+    return NextResponse.json(campaign)
+  } catch (error) {
+    console.error('Error updating campaign:', error)
+    return NextResponse.json(
+      { error: 'Failed to update campaign' },
       { status: 500 }
     )
   }
