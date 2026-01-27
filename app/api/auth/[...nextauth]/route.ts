@@ -7,7 +7,7 @@ const loginAttempts = new Map<string, { count: number; lockedUntil?: number }>()
 const LOCKOUT_DURATION = 5 * 60 * 1000 // 5 minutes in milliseconds
 const MAX_ATTEMPTS = 5
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
