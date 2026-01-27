@@ -120,7 +120,7 @@ export async function sendEmail(eventId: string) {
       to: event.contact.email,
       subject: personalizedSubject,
       html: personalizedBody,
-      reply_to: event.campaign.replyTo,
+      reply_to: event.campaign.replyTo || undefined,
       tags: [
         { name: 'campaign_id', value: event.campaignId },
         { name: 'contact_id', value: event.contactId },
