@@ -30,6 +30,30 @@ export default function RootLayout({
           <main className="min-h-screen">
             {children}
           </main>
+          <footer className="border-t py-6 mt-12">
+            <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+              <p>
+                Made by{" "}
+                <a
+                  href="https://www.lightfusion.be"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-foreground hover:underline"
+                >
+                  Nasser F.
+                </a>
+                {" "}from{" "}
+                <a
+                  href="https://www.lightfusion.be"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-foreground hover:underline"
+                >
+                  www.lightfusion.be
+                </a>
+              </p>
+            </div>
+          </footer>
           <Toaster />
         </ThemeProvider>
       </body>
