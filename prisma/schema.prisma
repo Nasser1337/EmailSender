@@ -45,21 +45,25 @@ model Contact {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
-  name        String
-  status      String   @default("draft")
-  subjectNl   String?
-  subjectFr   String?
-  bodyNl      String?
-  bodyFr      String?
-  fromEmail   String?
-  fromName    String?
-  replyTo     String?
-  userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  scheduledAt DateTime?
-  sentAt      DateTime?
+  id                 String   @id @default(cuid())
+  name               String
+  status             String   @default("draft")
+  subjectNl          String?
+  subjectFr          String?
+  bodyNl             String?
+  bodyFr             String?
+  followUpSubjectNl  String?
+  followUpSubjectFr  String?
+  followUpBodyNl     String?
+  followUpBodyFr     String?
+  fromEmail          String?
+  fromName           String?
+  replyTo            String?
+  userId             String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  scheduledAt        DateTime?
+  sentAt             DateTime?
 
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   emailEvents EmailEvent[]

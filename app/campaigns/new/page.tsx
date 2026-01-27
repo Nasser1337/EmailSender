@@ -18,6 +18,10 @@ export default function NewCampaignPage() {
     subjectFr: '',
     bodyNl: '',
     bodyFr: '',
+    followUpSubjectNl: '',
+    followUpSubjectFr: '',
+    followUpBodyNl: '',
+    followUpBodyFr: '',
     fromEmail: process.env.NEXT_PUBLIC_FROM_EMAIL || '',
     fromName: process.env.NEXT_PUBLIC_FROM_NAME || '',
     replyTo: process.env.NEXT_PUBLIC_FROM_EMAIL || '',
@@ -210,6 +214,74 @@ export default function NewCampaignPage() {
                 placeholder="Cher {{first_name}},&#10;&#10;Nous aimerions vous contacter concernant {{company}} à {{city}}.&#10;&#10;Cordialement,&#10;L'équipe"
                 value={formData.bodyFr}
                 onChange={(e) => updateField('bodyFr', e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Dutch Follow-Up Template</CardTitle>
+                <CardDescription>
+                  Follow-up email for contacts who didn't respond (Dutch)
+                </CardDescription>
+              </div>
+              <Badge>🇳🇱 Nederlands</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Follow-Up Subject Line</label>
+              <Input
+                placeholder="Re: Ons vorige bericht voor {{company}}"
+                value={formData.followUpSubjectNl}
+                onChange={(e) => updateField('followUpSubjectNl', e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Follow-Up Email Body</label>
+              <textarea
+                className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Beste {{first_name}},&#10;&#10;We hebben u onlangs een e-mail gestuurd maar hebben nog geen reactie ontvangen.&#10;&#10;Wij willen graag met u in contact komen over {{company}}.&#10;&#10;Laat het ons weten als u geïnteresseerd bent.&#10;&#10;Met vriendelijke groet,&#10;Het Team"
+                value={formData.followUpBodyNl}
+                onChange={(e) => updateField('followUpBodyNl', e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>French Follow-Up Template</CardTitle>
+                <CardDescription>
+                  Follow-up email for contacts who didn't respond (French)
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">🇫🇷 Français</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Follow-Up Subject Line</label>
+              <Input
+                placeholder="Re: Notre message précédent pour {{company}}"
+                value={formData.followUpSubjectFr}
+                onChange={(e) => updateField('followUpSubjectFr', e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Follow-Up Email Body</label>
+              <textarea
+                className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Cher {{first_name}},&#10;&#10;Nous vous avons récemment envoyé un e-mail mais n'avons pas encore reçu de réponse.&#10;&#10;Nous aimerions vous contacter concernant {{company}}.&#10;&#10;Faites-nous savoir si vous êtes intéressé.&#10;&#10;Cordialement,&#10;L'équipe"
+                value={formData.followUpBodyFr}
+                onChange={(e) => updateField('followUpBodyFr', e.target.value)}
               />
             </div>
           </CardContent>
