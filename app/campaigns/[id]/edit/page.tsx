@@ -28,6 +28,24 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
     replyTo: '',
   })
 
+  const templateVariables = [
+    { label: 'First Name', value: '{{first_name}}' },
+    { label: 'Last Name', value: '{{last_name}}' },
+    { label: 'Company', value: '{{company}}' },
+    { label: 'City', value: '{{city}}' },
+    { label: 'Province', value: '{{province}}' },
+    { label: 'Email', value: '{{email}}' },
+    { label: 'Phone', value: '{{phone}}' },
+    { label: 'Website', value: '{{website}}' },
+  ]
+
+  const insertVariable = (field: string, variable: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: prev[field as keyof typeof prev] + variable,
+    }))
+  }
+
   useEffect(() => {
     fetchCampaign()
   }, [params.id])

@@ -27,6 +27,24 @@ export default function NewCampaignPage() {
     replyTo: process.env.NEXT_PUBLIC_FROM_EMAIL || '',
   })
 
+  const templateVariables = [
+    { label: 'First Name', value: '{{first_name}}' },
+    { label: 'Last Name', value: '{{last_name}}' },
+    { label: 'Company', value: '{{company}}' },
+    { label: 'City', value: '{{city}}' },
+    { label: 'Province', value: '{{province}}' },
+    { label: 'Email', value: '{{email}}' },
+    { label: 'Phone', value: '{{phone}}' },
+    { label: 'Website', value: '{{website}}' },
+  ]
+
+  const insertVariable = (field: string, variable: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: prev[field as keyof typeof prev] + variable,
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -165,9 +183,20 @@ export default function NewCampaignPage() {
                 value={formData.subjectNl}
                 onChange={(e) => updateField('subjectNl', e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                Available variables: {'{'}{'{'} first_name {'}'}{'}'}, {'{'}{'{'} last_name {'}'}{'}'}, {'{'}{'{'} company {'}'}{'}'}, {'{'}{'{'} city {'}'}{'}'}, {'{'}{'{'} province {'}'}{'}'}, {'{'}{'{'} email {'}'}{'}'}, {'{'}{'{'} phone {'}'}{'}'}, {'{'}{'{'} website {'}'}{'}'}
-              </p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('subjectNl', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -178,6 +207,20 @@ export default function NewCampaignPage() {
                 value={formData.bodyNl}
                 onChange={(e) => updateField('bodyNl', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('bodyNl', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -202,9 +245,20 @@ export default function NewCampaignPage() {
                 value={formData.subjectFr}
                 onChange={(e) => updateField('subjectFr', e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                Available variables: {'{'}{'{'} first_name {'}'}{'}'}, {'{'}{'{'} last_name {'}'}{'}'}, {'{'}{'{'} company {'}'}{'}'}, {'{'}{'{'} city {'}'}{'}'}, {'{'}{'{'} province {'}'}{'}'}, {'{'}{'{'} email {'}'}{'}'}, {'{'}{'{'} phone {'}'}{'}'}, {'{'}{'{'} website {'}'}{'}'}
-              </p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('subjectFr', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -215,6 +269,20 @@ export default function NewCampaignPage() {
                 value={formData.bodyFr}
                 onChange={(e) => updateField('bodyFr', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('bodyFr', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -239,6 +307,20 @@ export default function NewCampaignPage() {
                 value={formData.followUpSubjectNl}
                 onChange={(e) => updateField('followUpSubjectNl', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('followUpSubjectNl', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -249,6 +331,20 @@ export default function NewCampaignPage() {
                 value={formData.followUpBodyNl}
                 onChange={(e) => updateField('followUpBodyNl', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('followUpBodyNl', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -273,6 +369,20 @@ export default function NewCampaignPage() {
                 value={formData.followUpSubjectFr}
                 onChange={(e) => updateField('followUpSubjectFr', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('followUpSubjectFr', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -283,6 +393,20 @@ export default function NewCampaignPage() {
                 value={formData.followUpBodyFr}
                 onChange={(e) => updateField('followUpBodyFr', e.target.value)}
               />
+              <div className="flex flex-wrap gap-1 mt-2">
+                {templateVariables.map((variable) => (
+                  <Button
+                    key={variable.value}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => insertVariable('followUpBodyFr', variable.value)}
+                  >
+                    {variable.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
