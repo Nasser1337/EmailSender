@@ -96,15 +96,36 @@ export async function POST(request: NextRequest) {
     <p>This is a test email to verify that email sending and click tracking are working correctly.</p>
     
     <div style="margin: 30px 0;">
-      <p><strong>Test Link 1 (Text Link):</strong></p>
-      <p>Visit our website: <a href="${trackingUrl}" style="color: #0066cc; text-decoration: underline;">www.medi-dental.be</a></p>
+      <p><strong>Test Link 1 (With Tracking):</strong></p>
+      <p>Visit our website: <a href="${trackingUrl}" style="color: #0066cc; text-decoration: underline;">www.medi-dental.be (tracked)</a></p>
     </div>
     
     <div style="margin: 30px 0;">
-      <p><strong>Test Link 2 (Button):</strong></p>
+      <p><strong>Test Link 2 (Direct Link - No Tracking):</strong></p>
+      <p>Direct link: <a href="https://www.medi-dental.be" style="color: #0066cc; text-decoration: underline;">www.medi-dental.be (direct)</a></p>
+    </div>
+    
+    <div style="margin: 30px 0;">
+      <p><strong>Test Link 3 (Button with Tracking):</strong></p>
       <a href="${contactTrackingUrl}" style="display: inline-block; background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-        Contact Us
+        Contact Us (tracked)
       </a>
+    </div>
+    
+    <div style="margin: 30px 0;">
+      <p><strong>Test Link 4 (Button Direct):</strong></p>
+      <a href="https://www.medi-dental.be/contact" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+        Contact Us (direct)
+      </a>
+    </div>
+    
+    <div style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-radius: 4px;">
+      <p style="font-size: 13px; color: #856404; margin: 0;">
+        <strong>Testing Instructions:</strong><br>
+        • Links 1 & 3 use click tracking (may show 404 if route not deployed)<br>
+        • Links 2 & 4 are direct links (should always work)<br>
+        • If direct links work but tracked links don't, there's a deployment issue
+      </p>
     </div>
     
     <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
