@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  context: { params: Promise<{ eventId: string }> }
 ) {
   try {
+    const params = await context.params
     const emailEvent = await prisma.emailEvent.findUnique({
       where: { id: params.eventId },
     })

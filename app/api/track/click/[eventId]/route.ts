@@ -5,9 +5,10 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  context: { params: Promise<{ eventId: string }> }
 ) {
   try {
+    const params = await context.params
     const { searchParams } = new URL(request.url)
     const targetUrl = searchParams.get('url')
     
