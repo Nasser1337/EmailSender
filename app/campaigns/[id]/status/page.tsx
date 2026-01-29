@@ -65,7 +65,7 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
       await fetch('/api/email-queue/process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batchSize: 50 }),
+        body: JSON.stringify({ batchSize: 1, delayMs: 2000 }),
       })
     } catch (error) {
       console.error('Failed to process queue:', error)
@@ -82,7 +82,7 @@ export default function CampaignStatusPage({ params }: { params: { id: string } 
       const response = await fetch(`/api/campaigns/${params.id}/bulk-send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailsPerHour: 500 }), // 500 emails/hour with paid plan
+        body: JSON.stringify({ emailsPerHour: 1800 }), // 1800 emails/hour = 1 email per 2 seconds
       })
       
       if (response.ok) {

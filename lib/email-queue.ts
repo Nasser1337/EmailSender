@@ -43,7 +43,7 @@ export async function queueEmail(
   return emailEvent
 }
 
-export async function sendQueuedEmails(batchSize: number = 10, delayMs: number = 2000) {
+export async function sendQueuedEmails(batchSize: number = 1, delayMs: number = 2000) {
   const queuedEvents = await prisma.emailEvent.findMany({
     where: {
       status: 'queued',
