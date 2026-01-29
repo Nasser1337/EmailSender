@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { eventId: string } }
@@ -15,6 +17,9 @@ export async function GET(
         { status: 400 }
       )
     }
+
+    // Decode the URL if it's encoded
+    const decodedUrl = decodeURIComponent(targetUrl)
     
     const emailEvent = await prisma.emailEvent.findUnique({
       where: { id: params.eventId },
@@ -35,7 +40,7 @@ export async function GET(
       }
       
       const metadata = emailEvent.metadata as any || {}
-      metadata.lastClickedLink = targetUrl
+      metadata.lastClickedLink = decodedUrl
       metadata.clickTimestamp = new Date().toISOString()
       updateData.metadata = metadata
       
@@ -45,7 +50,8 @@ export async function GET(
       })
     }
     
-    return NextResponse.redirect(targetUrl)
+    // Redirect to the decoded URL
+    return NextResponse.redirect(decodedUrl, 302)
   } catch (error) {
     console.error('Click tracking error:', error)
     
@@ -53,7 +59,8 @@ export async function GET(
     const targetUrl = searchParams.get('url')
     
     if (targetUrl) {
-      return NextResponse.redirect(targetUrl)
+      const decodedUrl = decodeURIComponent(targetUrl)
+      return NextResponse.redirect(decodedUrl, 302)
     }
     
     return NextResponse.json(
