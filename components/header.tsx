@@ -2,6 +2,7 @@
 
 import { Nav } from './nav'
 import { ThemeToggle } from './theme-toggle'
+import { LanguageToggle } from './language-toggle'
 import { Button } from './ui/button'
 import { LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
@@ -24,6 +25,7 @@ export function Header() {
               {session.user?.name}
             </span>
           )}
+          <LanguageToggle />
           <ThemeToggle />
           {session && (
             <Button

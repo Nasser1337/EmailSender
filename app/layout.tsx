@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "@/components/session-provider";
+import { LanguageProvider } from "@/contexts/language-context";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/header";
 
@@ -22,16 +23,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
+          <LanguageProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
           <footer className="border-t py-6 mt-12">
             <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
               <p>
@@ -57,7 +59,8 @@ export default function RootLayout({
             </div>
           </footer>
           <Toaster />
-        </ThemeProvider>
+          </ThemeProvider>
+          </LanguageProvider>
         </SessionProvider>
       </body>
     </html>
