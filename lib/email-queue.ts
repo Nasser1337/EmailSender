@@ -115,9 +115,9 @@ export async function sendEmail(eventId: string) {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const trackingPixelUrl = `${appUrl}/api/track/open/${event.id}`
-  const clickTrackingUrl = `${appUrl}/api/track/click/${event.id}`
-
-  personalizedBody = wrapLinksWithTracking(personalizedBody, clickTrackingUrl)
+  
+  // Click tracking disabled - using direct links instead
+  // personalizedBody = wrapLinksWithTracking(personalizedBody, clickTrackingUrl)
   personalizedBody = addTrackingPixel(personalizedBody, trackingPixelUrl)
 
   try {
