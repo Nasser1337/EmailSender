@@ -6,9 +6,11 @@ import { LanguageToggle } from './language-toggle'
 import { Button } from './ui/button'
 import { LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import { useLanguage } from '@/contexts/language-context'
 
 export function Header() {
   const { data: session } = useSession()
+  const { t } = useLanguage()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -34,7 +36,7 @@ export function Header() {
               onClick={() => signOut({ callbackUrl: '/login' })}
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              {t('logout')}
             </Button>
           )}
         </div>
